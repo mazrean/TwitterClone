@@ -1,0 +1,415 @@
+openapi: 3.0.2
+servers:
+  - url: localhost:3000
+info:
+  description: 'twitterCloneのAPI'
+  version: '1.0.0'
+  title: 'twitterClone API'
+  contact:
+    name: mazrean
+    url: 'https://github.com/mazrean/TwitterClone'
+security:
+  - Auth:
+      - read
+paths:
+  /login:
+    parameters:
+      - $ref: '#/components/parameters/sessions'
+    post:
+      tags:
+        - auth
+      operationId: postLogin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthUser'
+      responses:
+        200:
+          description: 成功
+        400:
+          description: 失敗
+  /signup:
+    parameters:
+      - $ref: '#/components/parameters/sessions'
+    post:
+      tags:
+        - auth
+      operationId: postSignup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AutUserh'
+      responses:
+        200:
+          description: 成功
+        400:
+          description: リクエストが不正
+  /logout:
+    parameters:
+      - $ref: '#/components/parameters/sessions'
+    post:
+      tags:
+        - auth
+      operationId: postLogout
+      responses:
+        200:
+          description: 成功
+        500:
+          description: サーバー内エラー
+  /users/me:
+    parameters:
+      - $ref: '#/components/parameters/sessions'
+    get:
+      tags:
+        - user
+      operationId: getUserMe
+      security:
+        - Auth: []
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthUser'
+        401:
+          description: 認証されていない
+  /users:
+    parameters:
+      - $ref: '#/components/parameters/sessions'
+    get:
+      tags:
+        - user
+      operationId: getUsers
+      parameters:
+        - name: follow
+          description: フォローしているユーザーに絞る
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: limit
+          description: 取得するユーザー数
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: offset
+          description: オフセット
+          in: query
+          required: false
+          schema:
+            type: integer
+      security:
+        - Auth: []
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        401:
+          description: 認証されていない
+  /users/{userID}:
+    parameters:
+      - name: userID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags:
+        - user
+      operationId: getUser
+      security:
+        - Auth: []
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        401:
+          description: 認証されていない
+  /users/{userID}/follow:
+    parameters:
+      - name: userID
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    post:
+      tags:
+        - follow
+      operationId: postFollow
+      security:
+        - Auth: []
+      responses:
+        200:
+          description: 成功
+        401:
+          description: 認証されていない
+    delete:
+      tags:
+        - follow
+      operationId: deleteFollow
+      security:
+        - Auth: []
+      responses:
+        200:
+          description: 成功
+        401:
+          description: 認証されていない
+  /messages:
+    parameters:
+      - $ref: '#/components/parameters/sessions'
+    post:
+      tags:
+        - message
+      operationId: postMessage
+      security:
+        - Auth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewMessage'
+      responses:
+        200:
+          description: 成功
+        401:
+          description: リクエストが不正
+        500:
+          description: 失敗
+    get:
+      tags:
+        - message
+      operationId: getMessages
+      security:
+        - Auth: []
+      parameters:
+        - name: user
+          description: ユーザーID
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: follow
+          description: フォローしているユーザーに絞る
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: favorite
+          description: ファボしているものに絞る
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: limit
+          description: 取得するメッセージ数
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: offset
+          description: オフセット
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+        500:
+          description: 失敗
+  /messages/{messageId}:
+    parameters:
+      - $ref: '#/components/parameters/sessions'
+    get:
+      tags:
+        - message
+      operationId: getMessage
+      security:
+        - Auth: []
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        500:
+          description: 失敗
+    patch:
+      tags:
+        - message
+      operationId: patchMessage
+      security:
+        - Auth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewMessage'
+      responses:
+        200:
+          description: 成功
+        401:
+          description: リクエストが不正
+        404:
+          description: メッセージが存在しない
+        500:
+          description: 失敗
+    delete:
+      tags:
+        - message
+      operationId: deleteMessage
+      security:
+        - Auth: []
+      responses:
+        200:
+          description: 成功
+        404:
+          description: メッセージが存在しない
+        500:
+          description: 失敗
+  /messages/{messageId}/favo:
+    post:
+      tags:
+        - favorite
+      operationId: postFavo
+      security:
+        - Auth: []
+      responses:
+        200:
+          description: 成功
+        404:
+          description: メッセージが存在しない
+        500:
+          description: 失敗
+    delete:
+      tags:
+        - favorite
+      operationId: deleteFavo
+      security:
+        - Auth: []
+      responses:
+        200:
+          description: 成功
+        401:
+          description: リクエストが不正
+        404:
+          description: メッセージが存在しない
+        500:
+          description: 失敗
+  /messages/{messageId}/pin:
+    post:
+      tags:
+        - pin
+      operationId: postPin
+      security:
+        - Auth: []
+      responses:
+        200:
+          description: 成功
+        404:
+          description: メッセージが存在しない
+        500:
+          description: 失敗
+    delete:
+      tags:
+        - pin
+      operationId: deletePin
+      security:
+        - Auth: []
+      responses:
+        200:
+          description: 成功
+        401:
+          description: リクエストが不正
+        404:
+          description: メッセージが存在しない
+        500:
+          description: 失敗
+
+components:
+  securitySchemes:
+    Auth:
+      type: http
+      description: 認証
+      scheme: basic
+  parameters:
+    sessions:
+      name: sessions
+      in: cookie
+      required: false
+      schema:
+        type: string
+  schemas:
+    UserAuth:
+      description: ユーザー
+      type: object
+      properties:
+        name:
+          type: string
+        password:
+          type: string
+    User:
+      description: ユーザー
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        follow:
+          type: boolean
+    NewMessage:
+      description: 新しいメッセージ
+      type: object
+      properties:
+        content:
+          type: string
+    Message:
+      description: メッセージ
+      type: object
+      properties:
+        id:
+          type: string
+        user:
+          $ref: '#/components/schemas/User'
+        content:
+          type: string
+        favorite:
+          type: boolean
+        favoNum:
+          type: integer
+        pin:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time

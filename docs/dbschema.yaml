@@ -1,0 +1,98 @@
+db:
+  type: mysql
+  name: twitter-clone
+tables:
+  users:
+    - name: id
+      type: int(11)
+      no_null: true
+      auto_increment: true
+      key: PRI
+    - name: name
+      type: varchar(32)
+      no_null: true
+    - name: password
+      type: char(128)
+      no_null: true
+    - name: created_at
+      type: datetime(6)
+      default: CURRENT_TIMESTAMP
+      no_null: true
+    - name: updated_at
+      type: datetime(6)
+      default: CURRENT_TIMESTAMP
+      no_null: true
+    - name: deleted_at
+      type: datetime(6)
+      default: null
+  messages:
+    - name: id
+      type: varchar(36)
+      no_null: true
+      key: PRI
+    - name: user_id
+      type: int(11)
+      no_null: true
+      foreign_key:
+        users: id
+    - name: content
+      type: text
+      no_null: true
+    - name: is_pinned
+      type: boolean
+      no_null: true
+      default: false
+    - name: created_at
+      type: datetime(6)
+      default: CURRENT_TIMESTAMP
+      no_null: true
+    - name: updated_at
+      type: datetime(6)
+      default: null
+    - name: deleted_at
+      type: datetime(6)
+      default: null
+  follows:
+    - name: id
+      type: int(11)
+      no_null: true
+      auto_increment: true
+      key: PRI
+    - name: user_id
+      type: int(11)
+      no_null: true
+      foreign_key:
+        users: id
+    - name: target_user_id
+      type: int(11)
+      no_null: true
+      foreign_key:
+        users: id
+    - name: created_at
+      type: datetime(6)
+      default: CURRENT_TIMESTAMP
+      no_null: true
+    - name: deleted_at
+      type: datetime(6)
+      default: null
+  favorites:
+    - name: id
+      type: int(11)
+      no_null: true
+      auto_increment: true
+      key: PRI
+    - name: user_id
+      type: int(11)
+      no_null: true
+      foreign_key:
+        users: id
+    - name: target_message_id
+      type: varchar(36)
+      no_null: true
+    - name: created_at
+      type: datetime(6)
+      default: CURRENT_TIMESTAMP
+      no_null: true
+    - name: deleted_at
+      type: datetime(6)
+      default: null
