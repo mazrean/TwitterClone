@@ -79,8 +79,6 @@ paths:
         401:
           description: 認証されていない
   /users:
-    parameters:
-      - $ref: '#/components/parameters/sessions'
     get:
       tags:
         - user
@@ -171,12 +169,12 @@ paths:
         401:
           description: 認証されていない
   /messages:
-    parameters:
-      - $ref: '#/components/parameters/sessions'
     post:
       tags:
         - message
       operationId: postMessage
+      parameters:
+        - $ref: '#/components/parameters/sessions'
       security:
         - Auth: []
       requestBody:
@@ -243,7 +241,6 @@ paths:
           description: 失敗
   /messages/{messageId}:
     parameters:
-      - $ref: '#/components/parameters/sessions'
       - name: messageId
         in: path
         required: true
@@ -268,6 +265,8 @@ paths:
       tags:
         - message
       operationId: patchMessage
+      parameters:
+        - $ref: '#/components/parameters/sessions'
       security:
         - Auth: []
       requestBody:
@@ -289,6 +288,8 @@ paths:
       tags:
         - message
       operationId: deleteMessage
+      parameters:
+        - $ref: '#/components/parameters/sessions'
       security:
         - Auth: []
       responses:
@@ -335,6 +336,7 @@ paths:
           description: 失敗
   /messages/{messageId}/pin:
     parameters:
+      - $ref: '#/components/parameters/sessions'
       - name: messageId
         in: path
         required: true
