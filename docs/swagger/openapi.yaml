@@ -42,7 +42,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AutUserh'
+              $ref: '#/components/schemas/AuthUser'
       responses:
         200:
           description: 成功
@@ -244,6 +244,11 @@ paths:
   /messages/{messageId}:
     parameters:
       - $ref: '#/components/parameters/sessions'
+      - name: messageId
+        in: path
+        required: true
+        schema:
+          type: string
     get:
       tags:
         - message
@@ -294,6 +299,12 @@ paths:
         500:
           description: 失敗
   /messages/{messageId}/favo:
+    parameters:
+      - name: messageId
+        in: path
+        required: true
+        schema:
+          type: string
     post:
       tags:
         - favorite
@@ -323,6 +334,12 @@ paths:
         500:
           description: 失敗
   /messages/{messageId}/pin:
+    parameters:
+      - name: messageId
+        in: path
+        required: true
+        schema:
+          type: string
     post:
       tags:
         - pin
@@ -366,7 +383,7 @@ components:
       schema:
         type: string
   schemas:
-    UserAuth:
+    AuthUser:
       description: ユーザー
       type: object
       properties:
